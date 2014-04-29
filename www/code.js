@@ -4,8 +4,14 @@ var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
 
 waitFor.socket = true
-var ws = new (WebSocket || MozWebSocket)(buddhapongServer.replace(/^http/, 'ws'))
-ws.onopen = function() { delete waitFor.socket; main() }
+addScript('http://cdn.sockjs.org/sockjs-0.3.min.js')
+function waitForSockJS() {
+    if (window.SockJS) {
+        ws = new SockJS(buddhapongServer + '/ws')
+        ws.onopen = function() { delete waitFor.socket; main() }
+    } else setTimeout(waitForSockJS, 30)
+}
+waitForSockJS()
 
 waitFor.opentok = true
 addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
