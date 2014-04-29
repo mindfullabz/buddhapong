@@ -1,9 +1,4 @@
-
-$(function () {
-    $('body').append($('<div/>').text('hello world!!'))
-})
-throw 'stopping'
-
+try {
 var waitFor = {}
 var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
@@ -48,6 +43,11 @@ function main() {
     ws.send(_.json('hello, I have arrived: ' + Math.random()))
 }
 main()
+} catch (e) {
+    $(function () {
+        $('body').append($('<div/>').text('err: ' + e))
+    })
+}
 
 // document.addEventListener('deviceready', function() {
 //       // Getting OpenTokRTC's room's credentials. 
