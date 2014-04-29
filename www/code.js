@@ -25,7 +25,7 @@ waitFor.dom = true
 $(function () { delete waitFor.dom; main() })
 
 function main() {
-    if (_.keys(waitFor) > 0) {
+    if (_.keys(waitFor).length > 0) {
         try {
             $('#main').text('waiting for: ' + _.keys(waitFor))
         } catch (e) {}
