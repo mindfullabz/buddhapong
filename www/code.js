@@ -1,43 +1,47 @@
 
+var waitCount = 0
 var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
 
-addScript(buddhapongServer + '/socket.io/socket.io.js')
-addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
+waitCount++
+var ws = new (WebSocket || MozWebSocket)(buddhapongServer.replace(/^http/, 'ws'))
+ws.onopen = function() { waitCount--; main() }
 
-var waitCount = 0
+waitCount++
+addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
+function waitForOT() {
+    if (window.TB) window.OT = window.TB
+    if (window.OT) { waitCount--; main() }
+    else setTimeout(waitForOT, 30)
+}
+waitForOT()
 
 if (isApp) {
     waitCount++
-    document.addEventListener('deviceready', function () { waitCount-- })
+    document.addEventListener('deviceready', function () { waitCount--; main() })
 }
 
 waitCount++
-$(function () {
-    waitCount--
-})
-
-function wait() {
-
-    $('#main').text('' + waitCount + ',' + window.io + ',' + window.OT)
-
-    if (window.TB) window.OT = window.TB
-    if (waitCount == 0 && window.io && window.OT) main()
-    else setTimeout(wait, 1000)
-}
-wait()
+$(function () { waitCount--; main() })
 
 function main() {
-    io = io.connect(buddhapongServer, { port : 80 })
+    if (waitCount > 0) {
+        try {
+            $('#main').text('waiting... ' + waitCount)
+        } catch (e) {}
+        return
+    }
 
-    io.on('billboard', function (b) {
-        $('#main').empty().append($('<pre/>').text(_.json(b, true)))
-    })
-
-    var post = {}
-    post[Math.random()] = { data : 'hi there2!' }
-    io.emit('write', post)
+    ws.onmessage = function (e) {
+        var data = _.unJson(e.data)
+        $('#main').empty().append($('<pre/>').text(_.json(data, true)))
+    }
+    ws.onclose = function (e) {
+        $('#main').empty().text('SOCKET CLOSED')
+    }
+    ws.send('hello, I have arrived: ' + Math.random())
 }
+main()
 
 // document.addEventListener('deviceready', function() {
 //       // Getting OpenTokRTC's room's credentials. 
