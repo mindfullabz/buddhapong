@@ -1,33 +1,33 @@
 
-var waitCount = 0
+var waitFor = {}
 var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
 
-waitCount++
+waitFor.socket = true
 var ws = new (WebSocket || MozWebSocket)(buddhapongServer.replace(/^http/, 'ws'))
-ws.onopen = function() { waitCount--; main() }
+ws.onopen = function() { delete waitFor.socket; main() }
 
-waitCount++
+waitFor.opentok = true
 addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
 function waitForOT() {
     if (window.TB) window.OT = window.TB
-    if (window.OT) { waitCount--; main() }
+    if (window.OT) { delete waitFor.opentok; main() }
     else setTimeout(waitForOT, 30)
 }
 waitForOT()
 
 if (isApp) {
-    waitCount++
-    document.addEventListener('deviceready', function () { waitCount--; main() })
+    waitFor.deviceready = true
+    document.addEventListener('deviceready', function () { delete waitFor.deviceready; main() })
 }
 
-waitCount++
-$(function () { waitCount--; main() })
+waitFor.dom = true
+$(function () { delete waitFor.dom; main() })
 
 function main() {
-    if (waitCount > 0) {
+    if (_.keys(waitFor) > 0) {
         try {
-            $('#main').text('waiting... ' + waitCount)
+            $('#main').text('waiting for: ' + _.keys(waitFor))
         } catch (e) {}
         return
     }
