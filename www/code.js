@@ -35,7 +35,7 @@ function main() {
     })
 
     var post = {}
-    post[Math.random()] = { data : 'hi there!' }
+    post[Math.random()] = { data : 'hi there2!' }
     io.emit('write', post)
 }
 
