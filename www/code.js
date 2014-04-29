@@ -19,8 +19,6 @@ if (isApp) {
 
 waitCount++
 $(function () {
-    $('body').append($('<div/>').text('isApp: ' + isApp))
-
     waitCount--
 })
 
