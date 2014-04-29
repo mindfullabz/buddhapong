@@ -10,6 +10,9 @@ ws.onopen = function() { delete waitFor.socket; main() }
 waitFor.opentok = true
 addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
 function waitForOT() {
+
+    console.log('waiting for OT')
+
     if (window.TB) window.OT = window.TB
     if (window.OT) { delete waitFor.opentok; main() }
     else setTimeout(waitForOT, 30)
