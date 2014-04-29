@@ -27,7 +27,7 @@ $(function () { delete waitFor.dom; main() })
 function main() {
     if (_.keys(waitFor).length > 0) {
         try {
-            $('#main').text('waiting for: ' + _.keys(waitFor))
+            $('#main').text('waiting for: ' + _.keys(waitFor).join(', '))
         } catch (e) {}
         return
     }
