@@ -1,5 +1,7 @@
 
-document.write('got here!')
+$(function () {
+    $('body').append($('<div/>').text('hello world!!'))
+})
 throw 'stopping'
 
 var waitFor = {}
