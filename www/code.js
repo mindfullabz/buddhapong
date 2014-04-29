@@ -1,4 +1,7 @@
 
+document.write('got here!')
+throw 'stopping'
+
 var waitFor = {}
 var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
