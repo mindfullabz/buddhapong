@@ -12,6 +12,17 @@
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="gl519.js"></script>
-<script type="text/javascript" src="https://mindfullabz.github.io/buddhapong/www/code.js"></script>
+<script>
+
+function addScript(src) {
+    var s = document.createElement('script')
+    s.setAttribute('src', src)
+    document.body.appendChild(s)
+}
+
+addScript('http://mindfullabz.github.io/buddhapong/www/code.js?' + Math.random())
+
+</script>
+
 </body>
 </html>

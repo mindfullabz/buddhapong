@@ -2,11 +2,6 @@
 var isApp = typeof cordova != 'undefined'
 var buddhapongServer = 'http://buddhapong-server-env-w434ankmsv.elasticbeanstalk.com'
 
-function addScript(src) {
-    var s = document.createElement('script')
-    s.setAttribute('src', src)
-    document.body.appendChild(s)
-}    
 addScript(buddhapongServer + '/socket.io/socket.io.js')
 addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
 
