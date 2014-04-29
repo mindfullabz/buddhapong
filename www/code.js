@@ -10,9 +10,6 @@ ws.onopen = function() { delete waitFor.socket; main() }
 waitFor.opentok = true
 addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
 function waitForOT() {
-
-    console.log('waiting for OT')
-
     if (window.TB) window.OT = window.TB
     if (window.OT) { delete waitFor.opentok; main() }
     else setTimeout(waitForOT, 30)
@@ -34,6 +31,7 @@ function main() {
         } catch (e) {}
         return
     }
+    $('#main').text('loaded..')
 
     ws.onmessage = function (e) {
         var data = _.unJson(e.data)
@@ -42,7 +40,7 @@ function main() {
     ws.onclose = function (e) {
         $('#main').empty().text('SOCKET CLOSED')
     }
-    ws.send('hello, I have arrived: ' + Math.random())
+    ws.send(_.json('hello, I have arrived: ' + Math.random()))
 }
 main()
 
