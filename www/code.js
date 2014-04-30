@@ -71,13 +71,27 @@ function main() {
     function enterSession(session, host) {
         state = { session : session }
         ws.send(_.json(state))
+        $('#main').empty().text('connecting..')
 
-        var d = $('<div id="me"/>')
-        $('#main').empty().append(d)
-        $.post(buddhapongServer + '/createToken', session, function (token) {
-            var p = OT.initPublisher('44742772', 'me')
 
-            var s = OT.initSession('44742772', session)
+        // work here
+        var xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
+        xmlhttp.send();
+        var data = JSON.parse( xmlhttp.response );
+        crossTheStreams(data.apiKey, data.sid, data.token)
+
+        // $.post(buddhapongServer + '/createToken', session, function (token) {
+        //     crossTheStreams('44742772', session, token)
+        // })
+
+        function crossTheStreams(key, session, token) {
+            var d = $('<div id="me"/>')
+            $('#main').empty().append(d)
+
+            var p = OT.initPublisher(key, 'me')
+
+            var s = OT.initSession(key, session)
             s.on({
                 streamCreated : function(event) {
                     var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
@@ -89,7 +103,7 @@ function main() {
             s.connect(token, function() {
                 s.publish(p)
             })
-        })
+        }
     }
     ws.send(_.json(state))
 
