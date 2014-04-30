@@ -13,14 +13,17 @@ function waitForSockJS() {
 }
 waitForSockJS()
 
-waitFor.opentok = true
-addScript(isApp ? 'opentok.js' : 'http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
-function waitForOT() {
-    if (window.TB) window.OT = window.TB
-    if (window.OT) { delete waitFor.opentok; main() }
-    else setTimeout(waitForOT, 30)
+if (!isApp) {
+    waitFor.opentok = true
+    addScript('http://static.opentok.com/webrtc/v2.2/js/opentok.min.js')
+    function waitForOT() {
+        if (window.OT) { delete waitFor.opentok; main() }
+        else setTimeout(waitForOT, 30)
+    }
+    waitForOT()
+} else {
+    OT = TB
 }
-waitForOT()
 
 if (isApp) {
     waitFor.deviceready = true
@@ -38,27 +41,6 @@ function main() {
         return
     }
     $('#main').text('loaded..')
-
-
-
-
-$('body').append('<div id="debugDiv"/>')
-if (typeof console  != "undefined") 
-    if (typeof console.log != 'undefined')
-        console.olog = console.log;
-    else
-        console.olog = function() {};
-
-console.log = function(message) {
-    console.olog(message);
-    $('#debugDiv').append('<p>' + message + '</p>');
-};
-console.error = console.debug = console.info =  console.log
-console.log('test:', 5)
-
-
-
-
 
     ws.onclose = function (e) {
         $('#main').empty().text('SOCKET CLOSED')
@@ -94,71 +76,29 @@ console.log('test:', 5)
         ws.send(_.json(state))
         $('#main').empty().text('connecting..')
 
-
-        // work here
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
-        xmlhttp.send();
-        var data = JSON.parse( xmlhttp.response );
-        crossTheStreams(data.apiKey, data.sid, data.token)
-
-        // $.post(buddhapongServer + '/createToken', session, function (token) {
-        //     crossTheStreams('44742772', session, token)
-        // })
+        $.post(buddhapongServer + '/createToken', session, function (token) {
+            crossTheStreams('44742772', session, token)
+        })
 
         function crossTheStreams(key, session, token) {
-            if (isApp) {
+            var d = $('<div id="me"/>')
+            $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token, isApp : isApp })))
+            $('#main').append(d)
 
-                var data = {
-                    apiKey : key,
-                    sid : session,
-                    token : token
+            var p = OT.initPublisher(key, 'me')
+
+            var s = OT.initSession(key, session)
+            s.on({
+                streamCreated : function(event) {
+                    var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
+                    $('#main').append(d)
+                    s.subscribe(event.stream, d.attr('id'))
                 }
+            })
 
-                var d = $('<div id="myPublisherDiv"/>')
-                $('#main').empty().append(d)
-
-
-      var xmlhttp=new XMLHttpRequest();
-      xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
-      xmlhttp.send();
-      var data = JSON.parse( xmlhttp.response );
-
-      // Very simple OpenTok Code for group video chat
-      var publisher = TB.initPublisher(data.apiKey,'myPublisherDiv');
-
-      var session = TB.initSession( data.apiKey, data.sid ); 
-      session.on({
-        'streamCreated': function( event ){
-            var div = document.createElement('div');
-            div.setAttribute('id', 'stream' + event.stream.streamId);
-            document.body.appendChild(div);
-            session.subscribe( event.stream, div.id, {subscribeToAudio: false} );
-        }
-      });
-      session.connect(data.token, function(){
-        session.publish( publisher );
-      });                
-            } else {
-                var d = $('<div id="me"/>')
-                $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token, isApp : isApp })))
-                $('#main').append(d)
-
-                var p = OT.initPublisher(key, 'me')
-
-                var s = OT.initSession(key, session)
-                s.on({
-                    streamCreated : function(event) {
-                        var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
-                        $('#main').append(d)
-                        s.subscribe(event.stream, d.attr('id'))
-                    }
-                })
-
-                s.connect(token, function() {
-                    s.publish(p)
-                })
-            }
+            s.connect(token, function() {
+                s.publish(p)
+            })
         }
     }
     ws.send(_.json(state))
@@ -168,6 +108,22 @@ console.log('test:', 5)
     }))
 }
 main()
+
+htmlConsole = function () {
+    $('body').append('<div id="debugDiv"/>')
+    if (typeof console  != "undefined") 
+        if (typeof console.log != 'undefined')
+            console.olog = console.log;
+        else
+            console.olog = function() {};
+
+    console.log = function(message) {
+        console.olog(message);
+        $('#debugDiv').append('<p>' + message + '</p>');
+    };
+    console.error = console.debug = console.info =  console.log
+    console.log('console log:')
+}
 
 /*
 document.addEventListener('deviceready', function() {
