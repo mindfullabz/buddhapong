@@ -73,8 +73,9 @@ function main() {
         ws.send(_.json(state))
 
         var d = $('<div id="me"/>')
-        $('#main').append(d)
+        $('#main').empty().append(d)
         $.post(buddhapongServer + '/createToken', session, function (token) {
+            alert('session: ' + session)
             var session = OT.initSession('44742772', session)
             session.on({
                 streamCreated : function(event) {
