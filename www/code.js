@@ -90,7 +90,7 @@ function main() {
           var session = TB.initSession( data.apiKey, data.sid ); 
           session.on({
             'streamCreated': function( event ){
-                console.log('GOT HERE!!')
+                //console.log('GOT HERE!!')
                 var div = document.createElement('div');
                 div.setAttribute('id', 'stream' + event.stream.streamId);
                 document.body.appendChild(div);
