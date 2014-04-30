@@ -81,7 +81,7 @@ function main() {
         })
 
         function crossTheStreams(key, session, token) {
-            var d = $('<div id="me"/>')
+            var d = $('<div style="width:200px;height:200px" id="me"/>')
             $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token, isApp : isApp })))
             $('#main').append(d)
 
@@ -90,7 +90,7 @@ function main() {
             var s = OT.initSession(key, session)
             s.on({
                 streamCreated : function(event) {
-                    var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
+                    var d = $('<div style="width:200px;height:200px"/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
                     $('#main').append(d)
                     s.subscribe(event.stream, d.attr('id'))
                 }
