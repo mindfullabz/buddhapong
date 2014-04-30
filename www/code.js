@@ -86,24 +86,58 @@ function main() {
         // })
 
         function crossTheStreams(key, session, token) {
-            var d = $('<div id="me"/>')
-            $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token, isApp : isApp })))
-            $('#main').append(d)
+            if (isApp) {
 
-            var p = OT.initPublisher(key, 'me')
-
-            var s = OT.initSession(key, session)
-            s.on({
-                streamCreated : function(event) {
-                    var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
-                    $('#main').append(d)
-                    s.subscribe(event.stream, d.attr('id'))
+                var data = {
+                    apiKey : key,
+                    sid : session,
+                    token : token
                 }
-            })
 
-            s.connect(token, function() {
-                s.publish(p)
-            })
+                var d = $('<div id="myPublisherDiv"/>')
+                $('#main').empty().append(d)
+
+
+      var xmlhttp=new XMLHttpRequest();
+      xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
+      xmlhttp.send();
+      var data = JSON.parse( xmlhttp.response );
+
+      // Very simple OpenTok Code for group video chat
+      var publisher = TB.initPublisher(data.apiKey,'myPublisherDiv');
+
+      var session = TB.initSession( data.apiKey, data.sid ); 
+      session.on({
+        'streamCreated': function( event ){
+            var div = document.createElement('div');
+            div.setAttribute('id', 'stream' + event.stream.streamId);
+            document.body.appendChild(div);
+            session.subscribe( event.stream, div.id, {subscribeToAudio: false} );
+        }
+      });
+      session.connect(data.token, function(){
+        session.publish( publisher );
+      });                
+            } else {
+                var d = $('<div id="me"/>')
+                $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token, isApp : isApp })))
+                $('#main').append(d)
+
+                var p = OT.initPublisher(key, 'me')
+
+                var s = OT.initSession(key, session)
+                s.on({
+                    streamCreated : function(event) {
+                        var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
+                        $('#main').append(d)
+                        s.subscribe(event.stream, d.attr('id'))
+                    }
+                })
+
+                s.connect(token, function() {
+                    s.publish(p)
+                })
+            }
         }
     }
     ws.send(_.json(state))
