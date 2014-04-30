@@ -75,6 +75,8 @@ function main() {
         var d = $('<div id="me"/>')
         $('#main').empty().append(d)
         $.post(buddhapongServer + '/createToken', session, function (token) {
+            var p = OT.initPublisher('44742772', 'me')
+            
             var s = OT.initSession('44742772', session)
             s.on({
                 streamCreated : function(event) {
@@ -83,8 +85,9 @@ function main() {
                     s.subscribe(event.stream, d.attr('id'))
                 }
             })
+
             s.connect(token, function() {
-                s.publish(OT.initPublisher('44742772', 'me'))
+                s.publish(p)
             })
         })
     }
