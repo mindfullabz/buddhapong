@@ -74,6 +74,7 @@ function main() {
 
         var d = $('<div id="me"/>')
         $('#main').empty().append(d)
+            alert('session1: ' + session)
         $.post(buddhapongServer + '/createToken', session, function (token) {
             alert('session: ' + session)
             var session = OT.initSession('44742772', session)
