@@ -74,21 +74,17 @@ function main() {
 
         var d = $('<div id="me"/>')
         $('#main').empty().append(d)
-            alert('session1: ' + session)
         $.post(buddhapongServer + '/createToken', session, function (token) {
-            alert('session: ' + session)
-            var session = OT.initSession('44742772', session)
-            session.on({
+            var s = OT.initSession('44742772', session)
+            s.on({
                 streamCreated : function(event) {
                     var d = $('<div/>').attr('id', 'stream' + event.stream.streamId)
                     $('#main').append(d)
-                    session.subscribe(event.stream, d.attr('id'))
+                    s.subscribe(event.stream, d.attr('id'))
                 }
             })
-
-            var publisher = OT.initPublisher('44742772', 'me')
-            session.connect(token, function() {
-                session.publish(publisher)
+            s.connect(token, function() {
+                s.publish(OT.initPublisher('44742772', 'me'))
             })
         })
     }
