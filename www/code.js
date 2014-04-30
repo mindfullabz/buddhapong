@@ -39,19 +39,38 @@ function main() {
     }
     $('#main').text('loaded..')
 
-    ws.onmessage = function (e) {
-        var data = _.unJson(e.data)
-        $('#main').empty().append($('<pre/>').text(_.json(data, true)))
-    }
     ws.onclose = function (e) {
         $('#main').empty().text('SOCKET CLOSED')
     }
 
-    ws.send(_.json('hello, I have arrived: ' + Math.random()))
-    $.post(buddhapongServer + '/createSession', null, function (session) {
-        ws.send(_.json({ session : session }))
-    })
+    $('#main').empty().text('finding partner..')
+    var state = 'searching'
+    ws.onmessage = function (e) {
+        var data = _.unJson(e.data)
+        $('#main').empty().append($('<pre/>').text(_.json(data, true)))
 
+        if (state == 'searching' || state == 'searching+') {
+            var other = _.find(data, function (data, key) { return data.joinme })
+            if (other) return enterSession(other.joinme)
+            if (state == 'searching') {
+                state = 'searching+'
+                $.post(buddhapongServer + '/createSession', null, function (session) {
+                    if (state == 'searching+') {
+                        state = { joinme : session }
+                        ws.send(_.json(state))
+                    }
+                })
+            }
+        } else if (state.joinme) {
+            var other = _.find(data, function (data, key) { return data.session == state.joinme })
+            if (other) return enterSession(session)
+        }
+    }
+    function enterSession(session) {
+        state = { session : session }
+        ws.send(_.json(state))
+    }
+    ws.send(_.json(state))
 }
 main()
 
