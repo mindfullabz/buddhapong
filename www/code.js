@@ -77,10 +77,6 @@ function main() {
         $.post(buddhapongServer + '/createToken', session, function (token) {
 
 
-            alert('token: ' + token)
-
-
-
         var d = $('<div id="me"/>')
         $('#main').empty().append($('<div/>').text('testing1')).append(d)
 
@@ -91,6 +87,8 @@ function main() {
           var data = {}
           data.apiKey = 44742772
           data.sid = sid
+          data.token = token
+
 
           // Very simple OpenTok Code for group video chat
           var publisher = TB.initPublisher(data.apiKey,'me');
