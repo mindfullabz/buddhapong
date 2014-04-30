@@ -52,7 +52,7 @@ function main() {
             $('#main').empty().append($('<pre/>').text(_.json(data, true)))
 
         if (state == 'searching' || state == 'searching+') {
-            var other = _.find(data, function (data, key) { return data.joinme })
+            var other = _.find(data, function (data, key) { return data && data.joinme })
             if (other) return enterSession(other.joinme, false)
             if (state == 'searching') {
                 state = 'searching+'
@@ -64,61 +64,13 @@ function main() {
                 })
             }
         } else if (state.joinme) {
-            var other = _.find(data, function (data, key) { return data.session == state.joinme })
+            var other = _.find(data, function (data, key) { return data && data.session == state.joinme })
             if (other) return enterSession(state.joinme, true)
         }
     }
     function enterSession(session, host) {
         state = { session : session }
         ws.send(_.json(state))
-
-
-        var sid = session
-        $.post(buddhapongServer + '/createToken', session, function (token) {
-
-
-        var d = $('<div id="me"/>')
-        $('#main').empty().append($('<div/>').text('testing1')).append(d)
-
-          // var xmlhttp=new XMLHttpRequest();
-          // xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
-          // xmlhttp.send();
-          // var data = JSON.parse( xmlhttp.response );
-
-          // var data = {}
-          // data.apiKey = 44742772
-          // data.sid = sid
-          // data.token = token
-
-          var data = {}
-          data.apiKey = 44742772
-          data.sid = '1_MX40NDc0Mjc3Mn5-VHVlIEFwciAyOSAxODo0NToyNyBQRFQgMjAxNH4wLjE2NjI1Mjg1flB-'
-          data.token = host ? 'T1==cGFydG5lcl9pZD00NDc0Mjc3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1hZDg5YTQxYTk2NjFiOWExZWI1ZTYyY2IzY2VlZDg5YTMwOGI5N2FkOnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9MV9NWDQwTkRjME1qYzNNbjUtVkhWbElFRndjaUF5T1NBeE9EbzBOVG95TnlCUVJGUWdNakF4Tkg0d0xqRTJOakkxTWpnMWZsQi0mY3JlYXRlX3RpbWU9MTM5ODgyMjQ4NyZub25jZT0wLjI4NzA5OTA3MjcwMTA4MjUmZXhwaXJlX3RpbWU9MTQwMTQxNDI2OCZjb25uZWN0aW9uX2RhdGE9aGk=' : 'T1==cGFydG5lcl9pZD00NDc0Mjc3MiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1lMWJiOTkyNDFjOWY5Y2E5MGVmYmRkZjU1Y2NiZGVmYjE4MzUzYTI5OnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9MV9NWDQwTkRjME1qYzNNbjUtVkhWbElFRndjaUF5T1NBeE9EbzBOVG95TnlCUVJGUWdNakF4Tkg0d0xqRTJOakkxTWpnMWZsQi0mY3JlYXRlX3RpbWU9MTM5ODgyMjUwMSZub25jZT0wLjk4MDIwODk1MTIyNjc0NCZleHBpcmVfdGltZT0xNDAxNDE0MjY4JmNvbm5lY3Rpb25fZGF0YT1oaQ=='
-
-          // Very simple OpenTok Code for group video chat
-          var publisher = TB.initPublisher(data.apiKey,'me');
-
-          var session = TB.initSession( data.apiKey, data.sid ); 
-          session.on({
-            'streamCreated': function( event ){
-                //console.log('GOT HERE!!')
-                var div = document.createElement('div');
-                div.setAttribute('id', 'stream' + event.stream.streamId);
-                document.body.appendChild(div);
-                session.subscribe( event.stream, div.id, {subscribeToAudio: false} );
-            }
-          });
-          session.connect(data.token, function(){
-            session.publish( publisher );
-          });
-
-        })
-
-
-        return
-
-
-
 
         var d = $('<div id="me"/>')
         $('#main').empty().append(d)
@@ -130,7 +82,7 @@ function main() {
                 streamCreated : function(event) {
                     var d = $('<div/>').attr('id', 'stream' + event.stream.streamId).text('hi?')
                     $('#main').append(d)
-                    //s.subscribe(event.stream, d.attr('id'))
+                    s.subscribe(event.stream, d.attr('id'))
                 }
             })
 
