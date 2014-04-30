@@ -73,16 +73,21 @@ function main() {
         ws.send(_.json(state))
 
 
+        var sid = session
+        $.post(buddhapongServer + '/createToken', session, function (token) {
 
 
 
         var d = $('<div id="me"/>')
-        $('#main').empty().append(d)
+        $('#main').empty().append($('<div/>').text('testing1')).append(d)
 
-          var xmlhttp=new XMLHttpRequest();
-          xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
-          xmlhttp.send();
-          var data = JSON.parse( xmlhttp.response );
+          // var xmlhttp=new XMLHttpRequest();
+          // xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
+          // xmlhttp.send();
+          // var data = JSON.parse( xmlhttp.response );
+          var data = {}
+          data.apiKey = 44742772
+          data.sid = sid
 
           // Very simple OpenTok Code for group video chat
           var publisher = TB.initPublisher(data.apiKey,'me');
@@ -100,6 +105,8 @@ function main() {
           session.connect(data.token, function(){
             session.publish( publisher );
           });
+
+        })
 
 
         return
