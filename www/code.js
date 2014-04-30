@@ -63,7 +63,7 @@ function main() {
             }
         } else if (state.joinme) {
             var other = _.find(data, function (data, key) { return data.session == state.joinme })
-            if (other) return enterSession(session)
+            if (other) return enterSession(state.joinme)
         }
     }
     function enterSession(session) {
