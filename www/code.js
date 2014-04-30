@@ -47,7 +47,9 @@ function main() {
     var state = 'searching'
     ws.onmessage = function (e) {
         var data = _.unJson(e.data)
-        $('#main').empty().append($('<pre/>').text(_.json(data, true)))
+
+        if (!state.session)
+            $('#main').empty().append($('<pre/>').text(_.json(data, true)))
 
         if (state == 'searching' || state == 'searching+') {
             var other = _.find(data, function (data, key) { return data.joinme })
@@ -69,8 +71,30 @@ function main() {
     function enterSession(session) {
         state = { session : session }
         ws.send(_.json(state))
+
+        var d = $('<div id="me"/>')
+        $('#main').append(d)
+        $.post(buddhapongServer + '/createToken', session, function (token) {
+            var session = OT.initSession('44742772', session)
+            session.on({
+                streamCreated : function(event) {
+                    var d = $('<div/>').attr('id', 'stream' + event.stream.streamId)
+                    $('#main').append(d)
+                    session.subscribe(event.stream, d.attr('id'))
+                }
+            })
+
+            var publisher = OT.initPublisher('44742772', 'me')
+            session.connect(token, function() {
+                session.publish(publisher)
+            })
+        })
     }
     ws.send(_.json(state))
+
+    $('body').prepend($('<button/>').text('reload').click(function () {
+        location.reload()
+    }))
 }
 main()
 
