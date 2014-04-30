@@ -87,7 +87,8 @@ function main() {
 
         function crossTheStreams(key, session, token) {
             var d = $('<div id="me"/>')
-            $('#main').empty().append(d)
+            $('#main').empty().append($('<div/>').text(_.json({ key : key, session : session, token : token })))
+            $('#main').append(d)
 
             var p = OT.initPublisher(key, 'me')
 
