@@ -80,14 +80,14 @@ function main() {
         var d = $('<div id="me"/>')
         $('#main').empty().append($('<div/>').text('testing1')).append(d)
 
-          // var xmlhttp=new XMLHttpRequest();
-          // xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
-          // xmlhttp.send();
-          // var data = JSON.parse( xmlhttp.response );
-          var data = {}
-          data.apiKey = 44742772
-          data.sid = sid
-          data.token = token
+          var xmlhttp=new XMLHttpRequest();
+          xmlhttp.open("GET", "https://opentokrtc.com/cordova.json", false);
+          xmlhttp.send();
+          var data = JSON.parse( xmlhttp.response );
+          // var data = {}
+          // data.apiKey = 44742772
+          // data.sid = sid
+          // data.token = token
 
 
           // Very simple OpenTok Code for group video chat
