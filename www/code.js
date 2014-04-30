@@ -77,6 +77,9 @@ function main() {
         $.post(buddhapongServer + '/createToken', session, function (token) {
 
 
+            alert('token: ' + token)
+
+
 
         var d = $('<div id="me"/>')
         $('#main').empty().append($('<div/>').text('testing1')).append(d)
