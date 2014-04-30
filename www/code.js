@@ -39,6 +39,27 @@ function main() {
     }
     $('#main').text('loaded..')
 
+
+
+
+$('body').append('<div id="debugDiv"/>')
+if (typeof console  != "undefined") 
+    if (typeof console.log != 'undefined')
+        console.olog = console.log;
+    else
+        console.olog = function() {};
+
+console.log = function(message) {
+    console.olog(message);
+    $('#debugDiv').append('<p>' + message + '</p>');
+};
+console.error = console.debug = console.info =  console.log
+console.log('test:', 5)
+
+
+
+
+
     ws.onclose = function (e) {
         $('#main').empty().text('SOCKET CLOSED')
     }
